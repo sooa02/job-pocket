@@ -40,11 +40,15 @@ RAG 기반 이력서 피드백 서비스입니다.
 ### 매일 작업 시작 전
 
 ```bash
-git checkout develop
-git pull origin develop
-git checkout feature/be    # 본인 브랜치
-git merge develop
+git checkout dev
+git pull origin dev
+
+# 기능 브랜치 새로 생성
+git checkout -b feat/back/auth
 ```
+
+> ⚠️ `feat/back`, `feat/front`, `feat/llm` 브랜치 자체는 만들지 않습니다.
+> 반드시 `feat/back/{기능}` 형태로 바로 생성합니다.
 
 ### 커밋
 
@@ -52,16 +56,15 @@ git merge develop
 
 ```bash
 git add .
-git commit -m "feat(resume): POST /api/v1/resumes 엔드포인트 구현
-
+git commit -m "feat(auth): JWT 토큰 발급 구현
 
 Closes #JP-001"
-git push origin feature/be
+git push origin feat/back/auth
 ```
 
 커밋 타입: `feat` · `fix` · `docs` · `style` · `refactor` · `test` · `chore` · `infra` · `perf`
 
-자세한 규칙은 [`CONVENTIONS.md`](./CONVENTIONS.md) 를 참고합니다.
+자세한 규칙은 [`CONVENTIONS.md`](./docs/wiki/CONVENTIONS.md) 를 참고합니다.
 
 **AI로 커밋 메시지 작성하기**
 
@@ -95,8 +98,8 @@ Closes #JP-001
 
 ### PR 생성
 
-- 타겟 브랜치: `develop`
-- 제목 형식: `[JP-001] feat(resume): 이력서 업로드 API 구현`
+- 타겟 브랜치: `dev`
+- 제목 형식: `[JP-001] feat(auth): JWT 토큰 발급 구현`
 - GitHub Actions (CI · Security) 전체 통과 후 머지
 
 ---
@@ -160,14 +163,13 @@ docs/readme/
 
 ### docs/ppt — 발표자료
 
-발표자료 PPT를 pdf로 변환한 파일을 이 폴더에 업로드합니다.
+발표자료는 PDF로 변환 후 이 폴더에 업로드합니다.
 
 ```
 docs/ppt/
 ├── 중간발표_v1.pdf
 └── 최종발표_v1.pdf
 ```
-
 
 ---
 
@@ -179,5 +181,4 @@ docs/ppt/
 ❌ PR 없이 머지
 ❌ 이슈 번호 없는 커밋 (Closes #JP-XXX 누락)
 ```
-
 *last updated: 2026-04-18 | 조라에몽 팀 | 조라에몽*
