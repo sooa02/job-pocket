@@ -1,0 +1,11 @@
+# ==========================
+# Frontend (UI & HTTP Client)
+# ==========================
+streamlit~=1.56.0
+requests~=2.33.1
+
+# ==========================
+# JS / CSS 확장
+# ==========================
+streamlit-extras~=0.7.0
+streamlit-javascript~=0.1.5
