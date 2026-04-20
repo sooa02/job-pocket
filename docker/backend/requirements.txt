@@ -1,0 +1,45 @@
+# Python 3.12 / CPU only
+# ==========================
+# Backend
+# ==========================
+fastapi>=0.115.0
+uvicorn[standard]>=0.30.0
+pydantic==2.13.0
+
+# ==========================
+# DB
+# ==========================
+pymysql==1.1.2
+
+# ==========================
+# Vector Search (CPU)
+# ==========================
+faiss-cpu>=1.12.0
+
+# ==========================
+# Torch CPU only
+# sentence-transformers / langchain-huggingface 가 torch를 당기기 전에 선언
+# ==========================
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch>=2.0.0
+
+# ==========================
+# LangChain
+# ==========================
+langchain>=1.2.2
+langchain-community>=0.4
+langchain-huggingface>=1.2.0
+langchain-openai==1.1.12
+langchain-groq==1.1.2
+langchain-ollama>=0.3.0
+
+# ==========================
+# LLM Clients
+# ==========================
+openai==2.31.0
+groq==0.37.1
+
+# ==========================
+# Embeddings
+# ==========================
+sentence-transformers==5.4.1
