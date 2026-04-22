@@ -48,3 +48,9 @@ sentence-transformers==5.4.1
 # Runpod Flash
 # ==========================
 runpod-flash
+
+# ==========================
+# Runpod Flash
+# ==========================
+pytest>=8.0.0
+httpx>=0.28.0
