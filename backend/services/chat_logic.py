@@ -32,13 +32,11 @@ from retriever import HybridRetriever
 # -----------------------------
 
 DB_CONFIG = {
-    'host': os.getenv('HOST'),
-    'port': int(os.getenv('PORT')),
-    'user': os.getenv('USER'),
-    'password': os.getenv('PASSWORD'),
-    'db': os.getenv('DB'),
-    "ssl_ca": ROOT_DIR / "isrgrootx1.crt", #only for TiDB
-    "ssl_verify_cert": True, #only for TiDB
+    'host': os.getenv('VECTOR_DB_URL'),
+    'port': 3306,
+    'user': os.getenv('MYSQL_VECTOR_USER'),
+    'password': os.getenv('MYSQL_VECTOR_PASSWORD'),
+    'db': 'job_pocket_vector',
     'charset': 'utf8mb4'    
 }
 
@@ -76,7 +74,7 @@ selfintro_retriever = HybridRetriever(
     embeddings=hf_embeddings,
     top_n=3,       
     initial_k=5,
-    index_folder= str(ROOT_DIR / "faiss_index_high") #faiss 인덱스 저장 경로로 지정
+    index_folder= str(ROOT_DIR / "faiss_index_high") # 4/22 추후 드라이브 경로로 수정 예정
 )  
 
 OVERSTATEMENT_PATTERNS = [
