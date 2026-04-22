@@ -1,0 +1,16 @@
+services:
+  backend:
+    image: nobrain711/job-pocket:backend-v0.2.0
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+
+  frontend:
+    image: nobrain711/job-pocket:frontend-v0.2.0
+    ports:
+      - "8501:8501"
+    env_file:
+      - .env
+    depends_on:
+      - backend
