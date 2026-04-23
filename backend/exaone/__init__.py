@@ -1,5 +1,5 @@
-from .exaone_infer import exaone_sub_infer
+from .exaone_infer import exaone_infer
 
 __all__ = [
-    "exaone_sub_infer",
+    "exaone_infer",
 ]
