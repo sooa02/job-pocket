@@ -732,11 +732,20 @@ def build_draft_with_ollama(
         }
     )
 
-    result = call_runpod_ollama(
-        final_prompt.to_messages()
-    )  # runpod 호출로 생성된 답변 받아옴
-    return clean_text(remove_forbidden_headers(result))
+    messages = []
+    role_map = {
+        "system": "system",
+        "human": "user",
+        "ai": "assistant",
+    }
 
+    for msg in final_prompt.to_messages():
+        role = role_map.get(getattr(msg, "type", "human"), "user")
+        content = msg.content if isinstance(msg.content, str) else str(msg.content)
+        messages.append({"role": role, "content": content})
+
+    result = call_runpod_ollama(messages)
+    return clean_text(remove_forbidden_headers(result))
 
 
 def regenerate_local_draft_if_needed(
