@@ -1,15 +1,29 @@
+"""
+user_repository
+
+users 테이블에 대한 DB 접근 로직을 담당합니다.
+
+역할:
+- 이메일 기준 사용자 조회
+- 웹 회원가입 사용자 생성
+- 사용자 이력서 데이터 수정
+
+주의:
+- 이 모듈은 DB 접근만 담당합니다.
+- 비밀번호 해싱은 utils.security 또는 service 계층에서 처리합니다.
+- 비즈니스 로직은 services 계층에서 처리합니다.
+"""
+
 import json
-from typing import Dict, Tuple
+from typing import Tuple
 
 from pymysql.cursors import DictCursor
 
 from common.db import rdb_engine
-from schemas import ResumeData
-
-UserTuple = Tuple[str, str, str, str]
+from schemas import ResumeData, UserRow
 
 
-def get_user(email: str) -> UserTuple | None:
+def get_user(email: str) -> UserRow | None:
     """
     이메일을 기준으로 사용자 정보를 조회합니다.
 
@@ -29,17 +43,9 @@ def get_user(email: str) -> UserTuple | None:
                 WHERE email = %s
             """
             c.execute(sql, (email,))
-            user = c.fetchone()
 
-            if not user:
-                return None
+            return c.fetchone()
 
-            return (
-                user["username"],
-                user["password"],
-                user["email"],
-                user["resume_data"],
-            )
     finally:
         raw_conn.close()
 
@@ -85,39 +91,6 @@ def add_user_via_web(
     except Exception as e:
         raw_conn.rollback()
         return False, f"오류 발생: {e}"
-
-    finally:
-        raw_conn.close()
-
-
-def update_password(email: str, new_password_hash: str) -> bool:
-    """
-    사용자 비밀번호를 변경합니다.
-
-    Args:
-        email: 비밀번호를 변경할 사용자 이메일.
-        new_password_hash: 새로 해싱된 비밀번호.
-
-    Returns:
-        변경된 row가 있으면 True, 없으면 False를 반환합니다.
-    """
-    raw_conn = rdb_engine.raw_connection()
-    try:
-        with raw_conn.cursor(DictCursor) as c:
-            sql = """
-                UPDATE users
-                SET password = %s
-                WHERE email = %s
-            """
-            c.execute(sql, (new_password_hash, email))
-            success = c.rowcount > 0
-            raw_conn.commit()
-
-            return success
-
-    except Exception:
-        raw_conn.rollback()
-        raise
 
     finally:
         raw_conn.close()

@@ -20,7 +20,6 @@ repository package
 from .user_repository import (
     get_user,
     add_user_via_web,
-    update_password,
     update_resume_data,
 )
 
@@ -35,7 +34,6 @@ __all__ = [
     # user
     "get_user",
     "add_user_via_web",
-    "update_password",
     "update_resume_data",
     # chat
     "save_chat_message",
