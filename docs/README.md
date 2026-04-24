@@ -107,7 +107,7 @@
 | 분류 | 모델 | 제공처 | 용도 |
 |---|---|---|---|
 | LLM | **EXAONE 3.5 7.8B** | LG AI Research via RunPod | 이력서 피드백 생성 |
-| Embedding | **Qwen2.5 7B** | Alibaba Cloud via RunPod | 텍스트 임베딩 |
+| Embedding | **Qwen3 Embedding 0.6B** | Alibaba Cloud via RunPod | 텍스트 임베딩 |
 
 ### Infrastructure
 
@@ -122,6 +122,7 @@
 |---|---|
 | ![JIRA](https://img.shields.io/badge/Jira-0052CC?style=flat&logo=Jira&logoColor=white) | 애자일 프로젝트 스프린트 설정 |
 | ![Notion](https://img.shields.io/badge/Notion-000000?style=flat&logo=notion&logoColor=white)| 업무 및 프로젝트 관리 |
+| ![Discord](https://img.shields.io/badge/Discord-5865F2?style=flat&logo=discord&logoColor=white) | 업무 메신저 |
 
 
 
@@ -162,7 +163,7 @@
 텍스트 추출 & 전처리
      │
      ▼
-Qwen2.5 7B 임베딩 생성
+Qwen3 0.6B 임베딩 생성
      │
      ▼
 MySQL Vector DB에서 유사 채용공고 검색 (Top-K)
@@ -184,7 +185,7 @@ MySQL Vector DB에서 유사 채용공고 검색 (Top-K)
 - RunPod API Key (LLM 서버 접근용)
 - Git
 
-### 방법 1: Clone하여 실행 (권장)
+### 방법: Clone하여 실행을 권장
 
 ```bash
 # 1. 레포지토리 클론
@@ -203,21 +204,6 @@ docker compose up -d
 # FastAPI Docs: http://localhost:8000/docs
 ```
 
-### 방법 2: Fork하여 실행
-
-```bash
-# 1. GitHub에서 Fork 후 본인 레포지토리 클론
-git clone https://github.com/{YOUR_USERNAME}/job-pocket.git
-cd job-pocket
-
-# 2. 환경 변수 설정
-cp .env.example .env
-# .env 파일 편집
-
-# 3. 실행
-docker compose up -d
-```
-
 ### 환경 변수 설정 (`.env`)
 
 ```env
@@ -226,6 +212,9 @@ MYSQL_ROOT_PASSWORD=your_root_password
 MYSQL_DATABASE=job_pocket
 MYSQL_USER=your_db_user
 MYSQL_PASSWORD=your_db_password
+
+# LANGSMITH
+LANGSMITH_API_KEY=your_langsmith_key
 
 # RunPod (LLM & Embedding)
 RUNPOD_API_KEY=your_runpod_api_key
@@ -257,9 +246,6 @@ docker compose logs -f frontend
 ### 서비스 종료
 
 ```bash
-# 컨테이너 중지
-docker compose down
-
 # 컨테이너 + 볼륨 삭제 (DB 데이터 포함)
 docker compose down -v
 ```
@@ -394,6 +380,45 @@ JobPocket/
 - [프롬프트 전략](./docs/wiki/model/prompt.md)
 - [개발 컨벤션](./docs/wiki/CONVENTIONS.md)
 - [트러블슈팅](./docs/wiki/troubles/)
+
+---
+### 개인 회고
+<table style="width: 100%; border-collapse: collapse; border: 1px solid #ddd;">
+    <thead>
+        <tr style="background-color: #f8f9fa;">
+            <th style="width: 20%; border: 1px solid #ddd; padding: 10px;">이름</th>
+            <th style="border: 1px solid #ddd; padding: 10px;">회고</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td style="text-align: center; border: 1px solid #ddd;">최수아</td>
+            <td style="border: 1px solid #ddd; padding: 10px;">
+</td>
+        </tr>
+        <tr>
+            <td style="text-align: center; border: 1px solid #ddd;">장한재</td>
+            <td style="border: 1px solid #ddd; padding: 10px;"></td>
+        </tr>
+        <tr>
+            <td style="text-align: center; border: 1px solid #ddd;">홍완기</td>
+            <td style="border: 1px solid #ddd; padding: 10px;">
+            </td>
+        </tr>
+        <tr>
+            <td style="text-align: center; border: 1px solid #ddd;">전종혁</td>
+            <td style="border: 1px solid #ddd; padding: 10px;"></td>
+        </tr>
+        <tr>
+            <td style="text-align: center; border: 1px solid #ddd;">이창우</td>
+            <td style="border: 1px solid #ddd; padding: 10px;"></td>
+        </tr>
+        <tr>
+            <td style="text-align: center; border: 1px solid #ddd;">조동휘</td>
+            <td style="border: 1px solid #ddd; padding: 10px;"></td>
+        </tr>
+    </tbody>
+</table>
 
 ---
 
