@@ -51,10 +51,9 @@ def load_chat_history_api(email):
 
 
 def save_chat_message_api(email, role, content):
-    requests.post(
-        f"{BASE_URL}/chat/message",
-        json={"email": email, "role": role, "content": content},
-    )
+    # content가 None인 경우 빈 문자열로 처리하여 422 에러 방지
+    payload = {"email": email, "role": role, "content": content or ""}
+    requests.post(f"{BASE_URL}/chat/message", json=payload)
 
 
 def delete_chat_history_api(email):
@@ -68,10 +67,10 @@ def parse_request_api(prompt, selected_model):
     return res.json() if res.status_code == 200 else {}
 
 
-def generate_local_draft_api(prompt, user_info, selected_model):
+def generate_exaone_draft_api(parsed_data, user_info, selected_model):
     res = requests.post(
         f"{BASE_URL}/chat/step-draft",
-        json={"prompt": prompt, "user_info": user_info, "model": selected_model},
+        json={"parsed_data": parsed_data, "user_info": user_info, "model": selected_model},
     )
     return res.json().get("draft") if res.status_code == 200 else None
 
@@ -88,28 +87,28 @@ def revise_existing_draft_api(existing_draft, revision_request, selected_model):
     return res.json().get("revised") if res.status_code == 200 else existing_draft
 
 
-def refine_with_api_api(draft, prompt, selected_model):
+def refine_with_api_api(draft, parsed_data, selected_model):
     res = requests.post(
         f"{BASE_URL}/chat/step-refine",
-        json={"draft": draft, "prompt": prompt, "model": selected_model},
+        json={"draft": draft, "parsed_data": parsed_data, "model": selected_model},
     )
     return res.json().get("refined") if res.status_code == 200 else draft
 
 
-def fit_length_api(refined, prompt, selected_model):
+def fit_length_api(refined, parsed_data, selected_model):
     res = requests.post(
         f"{BASE_URL}/chat/step-fit",
-        json={"refined": refined, "prompt": prompt, "model": selected_model},
+        json={"refined": refined, "parsed_data": parsed_data, "model": selected_model},
     )
     return res.json().get("adjusted") if res.status_code == 200 else refined
 
 
 def build_final_response_api(
-    adjusted, prompt, selected_model, result_label="자소서 초안", change_summary=None
+    adjusted, parsed_data, selected_model, result_label="자소서 초안", change_summary=None
 ):
     payload = {
         "adjusted": adjusted,
-        "prompt": prompt,
+        "parsed_data": parsed_data,
         "model": selected_model,
         "result_label": result_label,
         "change_summary": change_summary,
