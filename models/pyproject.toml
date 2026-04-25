@@ -1,0 +1,9 @@
+[project]
+name = "models"
+version = "0.2.0"
+description = "EXAONE 3.5 serverless inference"
+requires-python = ">=3.12"
+dependencies = [
+    "pydantic>=2.13.3",
+    "runpod-flash>=1.14.0",
+]
