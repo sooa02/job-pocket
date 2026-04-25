@@ -27,6 +27,8 @@ from .chat_ollama import call_runpod_ollama
 # auth services
 from .auth_service import login_user, signup_user
 
+# resume services
+from .resume_service import get_resume_data, update_resume_data, update_user_resume_data
 
 __all__ = [
     # health
@@ -37,4 +39,8 @@ __all__ = [
     # auth
     "login_user",
     "signup_user",
+    # resume
+    "get_resume_data",
+    "update_resume_data",
+    "update_user_resume_data",
 ]

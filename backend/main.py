@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 # router
-from routers import health_router, auth_router, resume, chat
+from routers import health_router, auth_router, resume_router, chat
 
 # app
 app = FastAPI(title="JobPocket API", description="AI Cover Letter Assistant Backend")
@@ -23,7 +23,7 @@ app.add_middleware(
 # 라우터 연결
 app.include_router(health_router)
 app.include_router(auth_router)
-app.include_router(resume.router, prefix="/api/resume", tags=["Resume"])
+app.include_router(resume_router)
 app.include_router(chat.router, prefix="/api/chat", tags=["AI Chat Logic"])
 
 
