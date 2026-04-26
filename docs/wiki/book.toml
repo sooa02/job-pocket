@@ -1,0 +1,26 @@
+# docs/wiki/book.toml
+
+[book]
+title = "Job-Pocket Docs"
+description = "Job-Pocket 개발 문서"
+authors = ["조라에몽 팀"]
+language = "ko"
+multilingual = false
+src = "src"
+
+[build]
+build-dir = "book"
+
+[output.html]
+default-theme = "light"
+preferred-dark-theme = "navy"
+no-section-label = false
+git-repository-url = "https://github.com/Joraemon-s-Secret-Gadgets/job-pocket"
+edit-url-template = "https://github.com/Joraemon-s-Secret-Gadgets/job-pocket/edit/dev/docs/wiki/{path}"
+
+[output.html.search]
+enable = true
+
+[output.html.fold]
+enable = true
+level = 1

@@ -2,11 +2,9 @@ name: job-pocket
 
 services:
   backend:
-    image: nobrain711/job-pocket:backend-v0.4.2
+    image: nobrain711/job-pocket:backend-v0.5.0
     ports:
       - "8000:8000"
-    volumes:
-      - ./backend:/app
     env_file:
       - .env
     environment:
@@ -28,13 +26,13 @@ services:
     depends_on:
       database:
         condition: service_healthy
+    networks:
+      - app-network
 
   frontend:
-    image: nobrain711/job-pocket:frontend-v0.4.0
+    image: nobrain711/job-pocket:frontend-v0.5.0
     ports:
       - "8501:8501"
-    volumes:
-      - ./frontend:/app
     env_file:
       - .env
     environment:
@@ -42,11 +40,11 @@ services:
       API_BASE_URL: ${API_BASE_URL}
     depends_on:
       - backend
+    networks:
+      - app-network
 
   database:
-    image: nobrain711/job-pocket:database-v0.4.0
-    ports:
-      - "3306:3306"
+    image: nobrain711/job-pocket:database-v0.5.0
     env_file:
       - .env
     environment:
@@ -54,13 +52,18 @@ services:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     volumes:
       - mysql_data:/var/lib/mysql
-      - ./database/init:/docker-entrypoint-initdb.d
     healthcheck:
-      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-proot" ]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-proot"]
       interval: 10s
       timeout: 5s
       retries: 5
       start_period: 30s
+    networks:
+      - app-network
 
 volumes:
   mysql_data:
+
+networks:
+  app-network:
+    driver: bridge

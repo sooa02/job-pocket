@@ -70,7 +70,7 @@ sequenceDiagram
     A->>B: POST /api/auth/login<br/>{email, password}
     B->>D: get_user(email)
     D->>M: SELECT FROM users WHERE email=?
-    M-->>D: (username, hash, email, reset_token, resume_data)
+    M-->>D: (username, hash, email, resume_data)
     D-->>B: user tuple
     B->>H: hash_pw(req.password)
     H-->>B: input_hash

@@ -10,7 +10,7 @@ WORKDIR /app
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1
 
-COPY docker/frontend/requirements.txt ./requirements.txt
+COPY /requirements.txt ./requirements.txt
 
 RUN pip install --no-cache-dir --upgrade pip \
     && pip wheel --no-cache-dir --wheel-dir /wheels -r requirements.txt
@@ -35,4 +35,4 @@ COPY . .
 
 EXPOSE 8501
 
-CMD ["streamlit", "run", "app.py", "--server.port=8501", "--server.address=0.0.0.0", "--server.runOnSave=true"]
+CMD ["streamlit", "run", "app.py", "--server.port=8501", "--server.address=0.0.0.0"]

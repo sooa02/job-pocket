@@ -11,7 +11,7 @@
 
 | 뷰 | 파일 | 라인 수 | 주 기능 | 필요 인증 |
 |---|---|---|---|---|
-| Auth | `auth_view.py` | 59 | 로그인·회원가입·비밀번호 재설정 | 불필요 |
+| Auth | `auth_view.py` | 59 | 로그인·회원가입 | 불필요 |
 | Chat | `chat_view.py` | 391 | AI 자소서 첨삭 채팅 | 필요 |
 | Resume | `resume_view.py` | 50 | 이력 정보 관리 | 필요 |
 
@@ -27,8 +27,6 @@ Chat 뷰가 전체 분량의 76%를 차지하며, 시스템의 핵심 기능을 
 |---|---|---|
 | `login_view()` | 로그인 폼 | `login_api` |
 | `signup_view()` | 회원가입 폼 | `signup_api` |
-| `find_password_view()` | 비밀번호 찾기 (이메일 입력) | — |
-| `reset_password_view()` | 새 비밀번호 입력 | `update_password_api` |
 
 ### 2.2 login_view 흐름
 
@@ -65,20 +63,6 @@ def login_view():
 3컬럼 레이아웃(`[1, 2, 1]`)으로 중앙 정렬한다. `layout="wide"` 설정과 결합하여 데스크톱에서 폼이 과하게 늘어지는 것을 방지한다.
 
 로그인 성공 시 `history_loaded_for = None`을 설정하여, 사이드바 렌더링 시 해당 사용자의 이력을 새로 로드하도록 유도한다.
-
-### 2.3 비밀번호 재설정 플로우
-
-비밀번호 재설정은 3단계로 구성된다. 각 단계는 세션 상태 변수로 진행 상태를 추적한다:
-
-```mermaid
-stateDiagram-v2
-    [*] --> find_password: 찾기 버튼 클릭
-    find_password --> reset_password: 인증코드 검증 완료<br/>code_verified=True
-    reset_password --> login: 새 비밀번호 저장 성공
-    login --> [*]
-```
-
-`reset_email`, `reset_code`, `code_verified` 세 개의 세션 변수가 각 단계 간 데이터 전달에 사용된다. 현재 v0.2.0에서는 이메일 인증 코드를 실제로 발송하지 않으며, 향후 SMTP 연동 예정이다.
 
 ---
 
@@ -267,8 +251,6 @@ sequenceDiagram
 
 ```
 login_view → (회원가입 버튼) → signup_view
-login_view → (비밀번호 찾기 버튼) → find_password_view
-find_password_view → (코드 확인 완료) → reset_password_view
 ```
 
 ### 5.2 로그인 후

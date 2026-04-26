@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Virtual environments
+**/.venv/
+**/venv/
+env/
+ENV/
+
+# Git / IDE
+.git/
+.gitignore
+.vscode/
+.idea/
+.DS_Store
+
+# Local files
+.env
+.env.example
+*.log
+
+# Exclude folders
+.flash/
+.github/
+backend/
+database/
+models/

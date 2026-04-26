@@ -163,7 +163,7 @@ sequenceDiagram
 
 ### 5.1 Auth Router (`routers/auth.py`)
 
-세 개의 엔드포인트를 제공한다: 회원가입(`/signup`), 로그인(`/login`), 비밀번호 재설정(`/reset-pw`). 모든 엔드포인트는 `auth.hash_pw()`로 비밀번호를 SHA-256 해싱한다. 로그인 성공 시 사용자 튜플 `(username, password_hash, email, reset_token, resume_data)`을 그대로 반환하여, 프론트엔드가 `st.session_state.user_info`에 저장한다.
+두 개의 엔드포인트를 제공한다: 회원가입(`/signup`), 로그인(`/login`). 모든 엔드포인트는 `auth.hash_pw()`로 비밀번호를 SHA-256 해싱한다. 로그인 성공 시 사용자 튜플 `(username, password_hash, email, resume_data)`을 그대로 반환하여, 프론트엔드가 `st.session_state.user_info`에 저장한다.
 
 ### 5.2 Resume Router (`routers/resume.py`)
 

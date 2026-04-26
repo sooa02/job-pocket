@@ -263,7 +263,7 @@ WHERE id IN (%s, %s, %s);   -- FAISS에서 나온 top-3 ID
 ### 5.2 사용자 인증
 
 ```sql
-SELECT username, password, email, reset_token, resume_data
+SELECT username, password, email, resume_data
 FROM users
 WHERE email = %s;
 ```

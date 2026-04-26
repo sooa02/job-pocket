@@ -39,7 +39,7 @@ frontend/
 │   ├── api_client.py          # Backend API 호출 래퍼
 │   └── ui_components.py       # 공통 UI (CSS, 헤더 등)
 └── views/
-    ├── auth_view.py           # 로그인/회원가입/비밀번호 재설정
+    ├── auth_view.py           # 로그인/회원가입
     ├── chat_view.py           # AI 자소서 첨삭 채팅
     └── resume_view.py         # 내 스펙 보관함
 ```
@@ -69,8 +69,6 @@ flowchart TB
     
     P -->|login| L[auth_view.login_view]
     P -->|signup| S[auth_view.signup_view]
-    P -->|find_password| F[auth_view.find_password_view]
-    P -->|reset_password| R[auth_view.reset_password_view]
     
     SIDE --> M{menu?}
     M -->|chat| C[chat_view.chat_view]
@@ -82,7 +80,7 @@ flowchart TB
 | 변수 | 값 | 의미 |
 |---|---|---|
 | `logged_in` | bool | 로그인 여부 결정 |
-| `page` | login / signup / find_password / reset_password | 로그인 전 화면 |
+| `page` | login / signup | 로그인 전 화면 |
 | `menu` | chat / resume | 로그인 후 화면 |
 
 ### 3.3 화면 전환 메커니즘
@@ -110,10 +108,7 @@ DEFAULT_SESSION_VALUES = {
     "messages": [],
     "page": "login",
     "menu": "chat",
-    "reset_email": None,
     "selected_model": "GPT-4o-mini",
-    "reset_code": None,
-    "code_verified": False,
     "history_loaded_for": None,
     "show_welcome": True,
     "pending_prompt": None,
@@ -138,7 +133,6 @@ for key, value in DEFAULT_SESSION_VALUES.items():
 | `show_welcome` | 웰컴 화면 표시 | 이력 0건일 때 |
 | `pending_prompt` | 전송 대기 프롬프트 | 추천 프롬프트 클릭 시 |
 | `current_result_version` | 수정본 버전 카운터 | 수정 요청마다 +1 |
-| `reset_email`, `reset_code`, `code_verified` | 비밀번호 재설정 플로우 | 각 단계 |
 
 ### 4.3 로그아웃 시 초기화
 
@@ -211,7 +205,7 @@ def mypage_view(): ...
 
 | 뷰 | 파일 | 주요 기능 |
 |---|---|---|
-| Auth | `views/auth_view.py` | 로그인, 회원가입, 비밀번호 찾기/재설정 |
+| Auth | `views/auth_view.py` | 로그인, 회원가입 |
 | Chat | `views/chat_view.py` | 메시지 표시, 프롬프트 입력, 6단계 파이프라인 호출, 수정 버튼 |
 | Resume | `views/resume_view.py` | 이력 정보 입력 폼 (인적사항/학력/경력) |
 
@@ -236,7 +230,6 @@ def mypage_view(): ...
 |---|---|---|
 | `login_api` | POST /api/auth/login | (success, user_info or error) |
 | `signup_api` | POST /api/auth/signup | (success, message) |
-| `update_password_api` | POST /api/auth/reset-pw | bool |
 | `get_user_resume_api` | GET /api/resume/{email} | JSON string |
 | `update_resume_data_api` | PUT /api/resume/{email} | bool |
 | `load_chat_history_api` | GET /api/chat/history/{email} | list |

@@ -7,4 +7,4 @@ FROM mysql:9.3
 RUN microdnf install -y tzdata \
     && microdnf clean all
 
-COPY database/my.cnf /etc/mysql/conf.d/custom.cnf
+COPY /my.cnf /etc/mysql/conf.d/custom.cnf

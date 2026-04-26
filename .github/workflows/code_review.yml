@@ -1,0 +1,40 @@
+name: Code Review
+
+permissions:
+  contents: read
+  pull-requests: write
+
+on:
+  pull_request:
+    types: [ opened, reopened, synchronize ]
+    branches:
+      - main
+
+jobs:
+  code-review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: anc95/ChatGPT-CodeReview@main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          MODEL: gpt-4o
+          OPENAI_API_ENDPOINT: https://api.openai.com/v1
+          LANGUAGE: Korean
+          PROMPT: |
+            이 PR을 Google/Meta/Stripe/배달의 민족/SK AX 수준의 엄격한 코드 리뷰 관점으로 분석해주세요:
+
+            피드백은:
+              - 🔴 P0(반드시 수정): 즉시 수정하지 않으면 서비스 장애, 보안 취약점, 데이터 손실 등 치명적인 문제를 야기하는 항목
+              - 🟠 P1(중요): 성능 저하, 잠재적 버그, 유지보수성을 심각하게 해치는 항목
+              - 🟡 P2(권장): 코드 품질 개선, 가독성 향상, 컨벤션 통일이 필요한 항목
+              - 🔵 P3(추후 수정): 지금 당장은 아니지만 기술 부채로 쌓이기 전에 개선이 필요한 항목. 구체적인 개선 시점과 방향 제시
+              - 🟢 P4(테스트 권장): 해당 코드에 대해 작성하면 좋을 테스트 케이스 및 테스트 전략 제안. 단위/통합/E2E 테스트 구분하여 제시
+
+            피드백 작성 시:
+              - 문제보다 해결책 중심으로 제시
+              - 구체적인 코드 예시 포함
+              - "왜" 변경이 필요한지 원칙과 함께 설명
+
+            최고 수준의 코드만 승인하고, "잘 돌아가니까 괜찮아"는 수용하지 않음.
+            응답은 반드시 이모지를 항상 활용할 것.
