@@ -12,6 +12,9 @@
 - [API Spec](./backend/api_spec.md)
 - [Architecture](./backend/architecture.md)
 - [Database](./backend/database.md)
+- [Data Dictionary](./backend/data_dictionary.md)
+- [Data Ingestion](./backend/data_ingestion.md)
+- [FAISS Index Build](./backend/faiss_index_build.md)
 - [RAG Retriever](./backend/rag_retriever.md)
 
 # Conventions
@@ -28,9 +31,9 @@
 - [RAG Pipeline](./model/rag_pipeline.md)
 
 # Tests
-- [Test Plan](./tests/test_plan.md)
-- [Performance Report](./tests/performance_report.md)
+- [Retrieval Evaluation](./tests/retrieval_evaluation.md)
 
 # Troubles
 - [Serverless](./troubles/runpod/serverless.md)
 - [vLLM](./troubles/runpod/vllm.md)
+- [Chat Logic Optimization](./troubles/chat_logic_optimize.md)

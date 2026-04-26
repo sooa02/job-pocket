@@ -1,8 +1,8 @@
 # 🐳 Job-Pocket 인프라 구성
 
 > **문서 목적**: Docker Compose 기반 배포 구성, 컨테이너 간 네트워크 토폴로지, 볼륨·포트·환경변수 매핑을 기술한다.
-> **작성일**: 2026-04-22
-> **버전**: v0.2.0
+> **작성일**: 2026-04-26
+> **버전**: v0.3.0 (mermaid diagram을 image로 수정)
 > **관련 파일**: `docker-compose.yaml`, `docker/**/Dockerfile`, `.env.example`
 
 ---
@@ -11,31 +11,8 @@
 
 ### 1.1 물리 구성도
 
-```mermaid
-graph TB
-    subgraph Host["🖱️ Host Machine"]
-        subgraph Ports["Published Ports"]
-            P1["8501"]
-            P2["8000"]
-            P3["3306"]
-        end
-        
-        subgraph DockerNet["Docker Network: job-pocket"]
-            FE["📱 frontend<br/>Streamlit 1.56<br/>nobrain711/job-pocket:frontend-v0.2.0<br/>Internal: 8501"]
-            BE["⚙️ backend<br/>FastAPI + Python 3.12<br/>nobrain711/job-pocket:backend-v0.2.0<br/>Internal: 8000"]
-            DB["💾 database<br/>MySQL 9.3<br/>nobrain711/job-pocket:database-v0.1.1<br/>Internal: 3306"]
-        end
-        
-        V1[("🗄️ volume: mysql_data")]
-    end
-    
-    P1 --> FE
-    P2 --> BE
-    P3 --> DB
-    FE -->|"HTTP :8000"| BE
-    BE -->|"MySQL Proto :3306"| DB
-    DB --- V1
-```
+![물리 구성도](../assets/images/architecture/infrastructure.png)
+
 
 ### 1.2 3개 서비스 요약
 
@@ -461,4 +438,4 @@ docker compose up -d
 
 ---
 
-*last updated: 2026-04-22 | 조라에몽 팀*
+*last updated: 2026-04-26 | 조라에몽 팀*
