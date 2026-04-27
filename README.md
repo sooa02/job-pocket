@@ -89,16 +89,16 @@
 | 분류 | 기술 | 버전 | 용도 |
 |---|---|---|---|
 | Language | ![Python](https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=white) | 3.12 | 전체 백엔드 |
-| Frontend | ![Streamlit](https://img.shields.io/badge/Streamlit-FF4B4B?style=flat-square&logo=streamlit&logoColor=white) | latest | 사용자 인터페이스 |
-| Backend | ![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=flat-square&logo=fastapi&logoColor=white) | latest | REST API 서버 |
+| Frontend | ![Streamlit](https://img.shields.io/badge/Streamlit-FF4B4B?style=flat-square&logo=streamlit&logoColor=white) | 1.56.0 | 사용자 인터페이스 |
+| Backend | ![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=flat-square&logo=fastapi&logoColor=white) | 0.115.0 | REST API 서버 |
 
 ### Database
 
 | 분류 | 기술 | 용도 |
 |---|---|---|
 | RDBMS | ![MySQL](https://img.shields.io/badge/MySQL_9.3-4479A1?style=flat-square&logo=mysql&logoColor=white) | 사용자 정보, 이력서 메타데이터 저장 |
-| Vector Store | MySQL Vector | 임베딩 벡터 저장 및 유사도 검색 |
-| Document Store | MySQL NoSQL | 채용 공고 원문 및 피드백 이력 저장 |
+| Vector Store | MySQL (Vector type) | 임베딩 벡터 저장 및 유사도 검색 |
+| Document Store | MySQL NoSQL(Json) | 채용 공고 원문 및 피드백 이력 저장 |
 
 > MySQL 9의 Vector 및 NoSQL 기능을 활용하여 별도의 Vector DB 없이 단일 DB로 통합 관리합니다.
 
@@ -115,7 +115,7 @@
 |---|---|
 | ![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat-square&logo=docker&logoColor=white) | 컨테이너 환경 구성 |
 | ![Docker Compose](https://img.shields.io/badge/Docker_Compose-2496ED?style=flat-square&logo=docker&logoColor=white) | 멀티 컨테이너 오케스트레이션 |
-| ![RunPod](https://img.shields.io/badge/RunPod-673AB7?style=lat-square&logo=RunPod&logoColor=white) | GPU 기반 LLM / Embedding 서버 호스팅 |
+| ![RunPod](https://img.shields.io/badge/RunPod-673AB7?style=flat-square&logo=RunPod&logoColor=white) | GPU 기반 LLM / Embedding 서버 호스팅 |
 
 ### Co-Tools
 | 기술 | 용도 |
@@ -130,50 +130,90 @@
 
 ## 🏗️ 아키텍처
 
-```
-                    ┌─────────────┐
-                    │    USER     │ 
-                    │             │
-                    └──────┬──────┘
-                           │
-                    ┌──────▼──────┐
-                    │  Streamlit  │  ← Frontend UI
-                    │     (FE)    │
-                    └──────┬──────┘
-                           │ REST API
-                    ┌──────▼──────┐
-                    │   FastAPI   │  ← Backend Server
-                    │     (BE)    │
-                    └──────┬──────┘
-             ┌─────────────┼─────────────┐
-             │             │             │
-      ┌──────▼──────┐ ┌────▼────┐ ┌──────▼──────┐
-      │  MySQL 9.3  │ │  RAG    │ │  RunPod     │
-      │ RDBMS/Vec/  │ │Pipeline │ │ LLM+Embed   │
-      │  NoSQL      │ └─────────┘ └─────────────┘
-      └─────────────┘
-```
+<div align="center">
+    <img src="./docs/wiki/src/assets/images/architecture/logical_layered_architecture.png" width="80%" alt="Logical Architecture">
+</div>
 
 ### RAG 파이프라인
 
+<div align="center">
+    <img src="./docs/wiki/src/assets/images/model/rag_pipeline.png" width="70%" alt="Logical Architecture">
+</div>
+
+
+### 데이터베이스 설계 (ERD)
+
+<div align="center">
+  <img src="./docs/wiki/src/assets/images/backend/jobpocket_erd.png" width="90%" alt="Database ERD">
+</div>
+
+---
+
+## 프로젝트 구조 📁
+
 ```
-이력서 업로드
-     │
-     ▼
-텍스트 추출 & 전처리
-     │
-     ▼
-Qwen3 0.6B 임베딩 생성
-     │
-     ▼
-MySQL Vector DB에서 유사 채용공고 검색 (Top-K)
-     │
-     ▼
-검색 결과 + 이력서 내용 → EXAONE 3.5 7.8B 프롬프트 구성
-     │
-     ▼
-피드백 생성 및 반환
+job-pocket/
+├── .github/                # GitHub Issue/PR 템플릿 및 CI/CD 워크플로우
+├── backend/                # FastAPI 백엔드
+│   ├── common/             # 공통 설정 및 유틸리티 (DB 연결, API 요청 등)
+│   ├── middlewares/        # FastAPI 미들웨어 (CORS 설정 등)
+│   ├── repository/         # DB 접근 계층 (Base, Chat, User, Retrieval)
+│   ├── routers/            # API 엔드포인트 라우팅 (Auth, Chat, Resume 등)
+│   ├── schemas/            # Pydantic 데이터 검증 및 변환 스키마
+│   ├── services/           # 핵심 비즈니스 로직 (RAG, Resume 서비스 등)
+│   │   └── chat/           # LLM 분석/평가/생성 엔진 (Analyzer, Generator 등)
+│   ├── tests/              # 테스트 코드 (API, Integration, Evaluation 등)
+│   ├── utils/              # 백엔드 유틸리티 (FAISS/BM25 인덱스, 보안 등)
+│   └── main.py             # FastAPI 애플리케이션 진입점
+├── database/               # 데이터베이스 관련 설정 및 데이터 적재
+│   ├── ingestion/          # 데이터 수집, 가공 및 적재 파이프라인
+│   ├── init/               # DB 초기화 SQL 스크립트 (RDB, Vector Table 등)
+│   └── my.cnf              # MySQL 설정 파일
+├── docker/                 # 서비스별 Docker 구성 파일
+│   ├── backend/            # 백엔드 Dockerfile 및 패키지 목록
+│   ├── database/           # 데이터베이스 Dockerfile
+│   └── frontend/           # 프론트엔드 Dockerfile 및 패키지 목록
+├── docs/                   # 프로젝트 문서 및 위키
+│   └── wiki/               # 아키텍처, 컨벤션 등 상세 가이드
+├── frontend/               # Streamlit 프론트엔드
+│   ├── .streamlit/         # Streamlit 환경 설정
+│   ├── public/             # 로고 등 정적 리소스
+│   ├── utils/              # UI 컴포넌트 및 API 클라이언트
+│   ├── views/              # 기능별 화면 UI (Auth, Chat, Resume)
+│   └── app.py              # Streamlit 메인 실행 파일
+├── models/                 # Runpod Serverless에 배포한 LLM 서빙 및 모델 관련 코드
+│   ├── common/             # RunPod 연동 및 공통 유틸리티
+│   ├── schemas/            # 모델 입출력 데이터 스키마
+│   └── exaone.py           # EXAONE 3.5 모델 인터페이스
+├── .env.example            # 환경변수 설정 예시
+├── docker-compose.dev.yaml # 개발용 Docker Compose 설정
+├── docker-compose.yaml     # 운영용 Docker Compose 설정
+├── LICENSE                 # 프로젝트 라이선스 (MIT)
+└── README.md               # 프로젝트 메인 설명서
 ```
+
+---
+
+## 🖥️ 서비스 화면
+
+<div align="center">
+  <h3>1. 스펙 입력 화면</h3>
+  <img src="./docs/wiki/src/assets/images/frontend/screenshot_resume.png" alt="Resume">
+  <p><i>사용자의 기본 정보와 기술 스택, 프로젝트 경험을 입력하는 화면입니다.</i></p>
+  
+  <br/>
+
+  <h3>2. AI 피드백 및 분석 결과</h3>
+  <img src="./docs/wiki/src/assets/images/frontend/screenshot_draft.png" alt="Draft">
+  <img src="./docs/wiki/src/assets/images/frontend/screenshot_evaluation.png" alt="Result Screen">
+  <p><i>생성된 초안과 함께 평가 결과 및 보완 포인트를 답변합니다.</i></p>
+
+  <br/>
+
+  <h3>3. 대화형 수정 워크플로우</h3>
+  <img src="./docs/wiki/src/assets/images/frontend/screenshot_revise.png" alt="Chat Screen">
+  <p><i>추가 대화를 통해 특정 문항을 수정하거나 내용을 보완합니다.</i></p>
+</div>
 
 ---
 
@@ -181,9 +221,12 @@ MySQL Vector DB에서 유사 채용공고 검색 (Top-K)
 
 ### 사전 요구사항
 
-- Docker & Docker Compose 설치
-- RunPod API Key (LLM 서버 접근용)
-- Git
+- **Docker & Docker Compose**: 컨테이너 환경 실행을 위해 필수입니다.
+- **Git**: 레포지토리 클론 및 소스 관리를 위해 필요합니다.
+- **RunPod API Key & Endpoint**: GPU 기반 LLM/Embedding 서버리스 API 접근을 위해 필요합니다.
+- **HuggingFace Token (HF_TOKEN)**: 모델 가중치 및 라이브러리 접근을 위해 필요합니다.
+- **LangSmith API Key** (선택): AI 파이프라인 모니터링 및 트레이싱을 원할 경우 필요합니다.
+- **사전 구축된 인덱스 데이터**: FAISS 및 BM25 검색을 위한 인덱스 파일이 준비되어 있어야 합니다. ([직접 생성 방법](./docs/wiki/src/backend/faiss_index_build.md) 또는 `INDEX_URL` 참고)
 
 ### 방법: Clone하여 실행을 권장
 
@@ -207,26 +250,41 @@ docker compose up -d
 ### 환경 변수 설정 (`.env`)
 
 ```env
-# Database
-MYSQL_ROOT_PASSWORD=your_root_password
-MYSQL_DATABASE=job_pocket
-MYSQL_USER=your_db_user
-MYSQL_PASSWORD=your_db_password
+# Frontend & API
+API_BASE_URL=http://localhost:8000
 
-# LANGSMITH
-LANGSMITH_API_KEY=your_langsmith_key
+# LLM / External APIs 
+OPENAI_API_KEY=your_openai_api_key
+GROQ_API_KEY=your_groq_api_key
+HF_TOKEN=your_huggingface_token
 
 # RunPod (LLM & Embedding)
 RUNPOD_API_KEY=your_runpod_api_key
-RUNPOD_LLM_ENDPOINT=https://api.runpod.ai/v2/{your_llm_pod_id}/runsync
-RUNPOD_EMBED_ENDPOINT=https://api.runpod.ai/v2/{your_embed_pod_id}/runsync
+RUNPOD_ENDPOINT=your_runpod_endpoint_id
 
-# FastAPI
-API_HOST=0.0.0.0
-API_PORT=8000
+# LangSmith (Tracing & Monitoring)
+LANGSMITH_TRACING=true
+LANGSMITH_ENDPOINT=https://api.smith.langchain.com
+LANGSMITH_API_KEY=your_langsmith_api_key
+LANGSMITH_PROJECT=Job-pocket
 
-# Streamlit
-STREAMLIT_PORT=8501
+# Database - RDB (MySQL)
+# rdb_user, rdb_password 등을 실제 사용할 값으로 변경하세요.
+RDB_URL=mysql+pymysql://rdb_user:rdb_password@localhost:3306/job_pocket_rdb
+MYSQL_RDB_USER=rdb_user
+MYSQL_RDB_PASSWORD=rdb_password
+
+# Database - Vector (MySQL Vector Store)
+VECTOR_DB_URL=mysql+pymysql://vector_user:vector_password@localhost:3306/job_pocket_vector
+MYSQL_VECTOR_USER=vector_user
+MYSQL_VECTOR_PASSWORD=vector_password
+
+# MySQL Container
+MYSQL_ROOT_PASSWORD=your_root_password
+TIMEZONE=Asia/Seoul
+
+# External Resource (FAISS/BM25 Index 등)
+INDEX_URL=your_google_drive_index_folder_url
 ```
 
 ### 서비스 상태 확인
@@ -321,43 +379,18 @@ docker compose down -v
 현재, 생성 → 평가 → 보완 포인트 → 수정안 생성 흐름은 구현되어 있다. 이후에는 수정 이력 비교, 버전별 저장, 특정 문단만 선택 수정, 문체 옵션 선택 같은 기능을 붙이면 단순 생성 서비스가 아니라 실제 작성 도구에 가까운 구조로 확장할 수 있다. 
 
 ---
-## 10. 프로젝트 구조 📁
 
-```
-JobPocket/ 
-├── backend/                # FastAPI 백엔드
-│   ├── auth.py             # 사용자 인증 처리
-│   ├── common/             # 공통 유틸리티 및 설정
-│   ├── database.py         # DB 연결 및 쿼리 로직
-│   ├── exaone/             # EXAONE 모델 관련 처리
-│   ├── main.py             # FastAPI 애플리케이션 진입점
-│   ├── retriever.py        # RAG 기반 정보 검색
-│   ├── routers/            # API 엔드포인트 라우팅
-│   ├── schemas/            # Pydantic 데이터 검증 스키마
-│   ├── services/           # 핵심 비즈니스 로직 (AI 처리 등)
-│   ├── tests/              # 단위 테스트 코드
-│   └── utils/              # 기타 백엔드 유틸리티
-├── database/               # 데이터베이스 설정
-│   ├── init/               # 초기화 스크립트
-│   └── my.cnf              # MySQL 설정 파일
-├── docker/                 # Docker 관련 파일
-│   ├── backend/            # 백엔드 Dockerfile 및 설정
-│   ├── database/           # 데이터베이스 Dockerfile 및 설정
-│   └── frontend/           # 프론트엔드 Dockerfile 및 설정
-├── docs/                   # 프로젝트 문서
-│   ├── test_plan_sample.md # 테스트 계획서 샘플
-│   └── wiki/               # 아키텍처, ERD 등 위키 문서
-├── frontend/               # Streamlit 프론트엔드
-│   ├── app.py              # Streamlit 애플리케이션 메인
-│   ├── public/             # 정적 리소스 (이미지, 로고 등)
-│   ├── utils/              # 프론트엔드 유틸리티 (api_client 등)
-│   └── views/              # 화면 UI 구성 요소
-├── docker-compose.dev.yaml # 개발용 Docker Compose 설정
-├── docker-compose.yaml     # 운영용 Docker Compose 설정
-├── LICENSE                 # 프로젝트 라이선스
-├── README.md               # 프로젝트 메인 문서
-└── runpod_test.py          # RunPod 연동 테스트 스크립트
-```
+## 🔍 사전 조사 레포지토리
+
+본 프로젝트를 위해 팀원들이 각자 진행한 사전 기술 조사 및 프로토타입 레포지토리입니다.
+
+- **[chainlit_playground](https://github.com/Joraemon-s-Secret-Gadgets/chainlit_playground)** (`전종혁`) - streamlit 기반 UI/UX 디자인과 FastAPI 연동
+- **[mysqy-faiss-retriever-playground](https://github.com/Joraemon-s-Secret-Gadgets/mysql-faiss-retriever-playground)** (`이창우`) - ETL 파이프라인 구축, MySQL과 FAISS를 통한 벡터 검색 retriever 구현
+- **[mysql9_playground](https://github.com/Joraemon-s-Secret-Gadgets/mysql9_playground)** (`조동휘`) - mysql9.3 기반 벡터 연산 최적화 db 설정 및 docker 환경
+- **[resume-draft-playground](https://github.com/Joraemon-s-Secret-Gadgets/resume-draft-playground)** (`장한재`) - 사용자의 이력 정보와 유사한 배경을 가진 지원자들의 자소서 예시를 참고해, LLM이 자기소개서 초안을 생성하는 방식 실험
+- **[llm-length-control-playground](https://github.com/Joraemon-s-Secret-Gadgets/llm-length-control-playground)** (`홍완기`) - 성된 자기소개서를 원하는 글자 수에 맞게 정밀하게 재조정하고, 사용자 피드백 기반으로 대화형 수정
+- **[SSH_playground](https://github.com/Joraemon-s-Secret-Gadgets/SSH_placyground)** (`조동휘`) - - Runpod 연동 대비 SSH 터널링 및 jumpserver구현
+
 ---
 
 ## 📌 버전 히스토리
@@ -367,19 +400,21 @@ JobPocket/
 | `v0.1.0` | Docker Compose 기반 전체 서비스 스택 구축 | ✅ 완료 |
 | `v0.2.0` | BE · FE · LLM 통합 | ✅ 완료 |
 | `v0.3.0` | 버그 수정 및 안정화 | ✅ 완료 |
-| `v0.4.0` | 코드 리팩토링 및 성능 개선 | ⏳ 예정 |
-| `v0.5.0` | 배포 및 발표 준비 | ⏳ 예정 |
+| `v0.4.0` | 코드 리팩토링 및 성능 개선 | ✅ 완료 |
+| `v0.5.0` | 배포 및 발표 준비 | ✅ 완료 |
 
 ---
 
 ## 🔗 관련 문서
 
-- [백엔드 아키텍처](./docs/wiki/backend/architecture.md)
-- [DB 설계 (ERD)](./docs/wiki/backend/database.md)
-- [RAG 파이프라인](./docs/wiki/model/rag_pipeline.md)
-- [프롬프트 전략](./docs/wiki/model/prompt.md)
-- [개발 컨벤션](./docs/wiki/CONVENTIONS.md)
-- [트러블슈팅](./docs/wiki/troubles/)
+- [전체 아키텍처 및 데이터 흐름](./docs/wiki/src/architecture/overview.md)
+- [백엔드 아키텍처 상세](./docs/wiki/src/backend/architecture.md)
+- [DB 설계 (ERD)](./docs/wiki/src/backend/database.md)
+- [데이터 전처리 및 인제션 상세](./docs/wiki/src/backend/data_ingestion.md)
+- [RAG 파이프라인 설계](./docs/wiki/src/model/rag_pipeline.md)
+- [프롬프트 엔지니어링 전략](./docs/wiki/src/model/prompt.md)
+- [개발 컨벤션 가이드](./docs/wiki/src/conventions/development.md)
+- [트러블슈팅 리포트](./docs/wiki/src/troubles/README.md)
 
 ---
 ### 개인 회고
@@ -617,7 +652,6 @@ JobPocket/
     </tbody>
 </table>
 
----
 ---
 
 ## 📜 License
